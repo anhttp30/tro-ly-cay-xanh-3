@@ -1,1096 +1,588 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trợ Lý Cây Xanh 5 Phút - Dự án STEMpetition 2026</title>
-    <!-- Tải Tailwind CSS để tạo giao diện đẹp và tương thích mọi màn hình -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tải Font chữ Be Vietnam Pro & Inter dễ đọc, thân thiện -->
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Be Vietnam Pro', sans-serif;
-            background-color: #f3faf6;
-            color: #1e293b;
-        }
-        /* Hiệu ứng nảy nhẹ khi bấm nút hoặc hiện thông báo */
-        @keyframes popIn {
-            0% { transform: scale(0.92); opacity: 0; }
-            70% { transform: scale(1.03); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-pop {
-            animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        /* Hiệu ứng lá cây đung đưa nhẹ */
-        @keyframes sway {
-            0%, 100% { transform: rotate(-3deg); }
-            50% { transform: rotate(3deg); }
-        }
-        .animate-sway {
-            animation: sway 3s ease-in-out infinite;
-            transform-origin: bottom center;
-        }
-        /* Hiệu ứng nhân vật Chatbot gật gù/nhún nhảy khi đang suy nghĩ hoặc nói chuyện */
-        @keyframes gardenerTalk {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-4px) rotate(-3deg); }
-            75% { transform: translateY(-3px) rotate(3deg); }
-        }
-        .animate-gardener-talk {
-            animation: gardenerTalk 0.8s ease-in-out infinite;
-        }
-        /* Tùy chỉnh thanh cuộn mượt */
-        html {
-            scroll-behavior: smooth;
-        }
-        /* Tùy chỉnh thanh cuộn nhỏ gọn cho khung chat */
-        .chat-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-scroll::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 999px;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 999px;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trợ Lý Cây Xanh 5 Phút - Dành Cho Ba Mẹ Bận Rộn</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: #f4f9f4;
+    }
+    .card-hover {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px -8px rgba(22, 101, 52, 0.15);
+    }
+    @keyframes floatBot {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .bot-float {
+      animation: floatBot 3s ease-in-out infinite;
+    }
+    @keyframes nodHead {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-6deg); }
+      75% { transform: rotate(6deg); }
+    }
+    .bot-thinking {
+      animation: nodHead 0.6s ease-in-out infinite;
+    }
+    .chat-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-scroll::-webkit-scrollbar-thumb {
+      background-color: #bbf7d0;
+      border-radius: 9999px;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="text-slate-800 pb-24">
 
-    <!-- Hộp thông báo nổi (Toast Notification) thay thế cho alert() -->
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <!-- HEADER -->
+  <header class="bg-gradient-to-r from-emerald-700 via-green-600 to-teal-600 text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-8 text-center">
+      <span class="inline-block bg-white/20 backdrop-blur-sm text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
+        🌱 Dự án STEMpetition 2026 • Hạng mục Sáng tạo & Đổi mới
+      </span>
+      <h1 class="text-3xl md:text-4xl font-bold mb-2">Trợ Lý Cây Xanh 5 Phút</h1>
+      <p class="text-emerald-100 text-base md:text-lg max-w-2xl mx-auto">
+        "Ba mẹ bận rộn, cây vẫn xanh tươi!" — Giải pháp chăm sóc 5 loài cây quốc dân miền Bắc & tái sử dụng nước thông minh.
+      </p>
+    </div>
+  </header>
 
-    <!-- 1. HEADER & SLOGAN -->
-    <header class="bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 text-white shadow-lg relative overflow-hidden">
-        <!-- Họa tiết trang trí nền nhẹ nhàng -->
-        <div class="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full blur-xl"></div>
-        <div class="absolute -bottom-12 -left-10 w-36 h-36 bg-yellow-300/15 rounded-full blur-lg"></div>
+  <main class="max-w-5xl mx-auto px-4 mt-8 space-y-10">
 
-        <div class="max-w-6xl mx-auto px-4 py-6 sm:py-8 relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4 text-center md:text-left">
-                <!-- Biểu tượng Linh vật Chậu Cây SVG -->
-                <div class="bg-white p-3 rounded-2xl shadow-md shrink-0 animate-sway">
-                    <svg class="w-12 h-12 sm:w-14 sm:h-14" viewBox="0 0 64 64" fill="none">
-                        <!-- Chậu cây -->
-                        <path d="M18 38H46L42 56C41.6 57.7 40.1 59 38.3 59H25.7C23.9 59 22.4 57.7 22 56L18 38Z" fill="#F59E0B"/>
-                        <rect x="15" y="33" width="34" height="6" rx="3" fill="#D97706"/>
-                        <!-- Mắt cười trên chậu -->
-                        <circle cx="27" cy="46" r="2" fill="#451A03"/>
-                        <circle cx="37" cy="46" r="2" fill="#451A03"/>
-                        <path d="M29 50C30.5 52 33.5 52 35 50" stroke="#451A03" stroke-width="2" stroke-linecap="round"/>
-                        <!-- Thân và lá -->
-                        <path d="M32 33V16" stroke="#15803D" stroke-width="3.5" stroke-linecap="round"/>
-                        <path d="M32 23C24 23 19 17 20 11C26 11 32 16 32 23Z" fill="#22C55E"/>
-                        <path d="M32 19C40 19 45 13 44 7C38 7 32 12 32 19Z" fill="#4ADE80"/>
-                        <path d="M32 16C28 9 30 4 33 3C36 6 36 11 32 16Z" fill="#16A34A"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs sm:text-sm font-semibold mb-1.5">
-                        <span>🏆 Dự án STEMpetition 2026</span>
-                        <span>•</span>
-                        <span>Nhóm Học Sinh Lớp 3</span>
-                    </div>
-                    <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight">
-                        Trợ Lý Cây Xanh 5 Phút
-                    </h1>
-                    <p class="text-emerald-50 text-sm sm:text-lg font-medium mt-1">
-                        "Ba mẹ bận rộn, cây vẫn xanh tươi!" 🌱
-                    </p>
-                </div>
-            </div>
-
-            <!-- Thanh điều hướng nhanh -->
-            <nav class="flex flex-wrap justify-center gap-2">
-                <a href="#weather-section" class="bg-white/15 hover:bg-white/25 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">🌦️ Thời tiết</a>
-                <a href="#plants-section" class="bg-white/15 hover:bg-white/25 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">🪴 5 Cây Miền Bắc</a>
-                <a href="#doctor-section" class="bg-white/15 hover:bg-white/25 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition">🩺 Bác Sĩ Cây</a>
-                <a href="#stem-tip-section" class="bg-amber-400 text-amber-950 hover:bg-amber-300 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow transition">♻️ Mẹo STEM</a>
-            </nav>
+    <!-- 1. CHẾ ĐỘ THỜI TIẾT MIỀN BẮC -->
+    <section class="bg-white rounded-3xl p-6 shadow-sm border border-emerald-100">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+        <div>
+          <h2 class="text-xl font-bold text-emerald-800 flex items-center gap-2">
+            🌤️ Chế Độ Thời Tiết Miền Bắc Thông Minh
+          </h2>
+          <p class="text-sm text-slate-500">Chọn thời tiết hiện tại ở Hà Nội / miền Bắc để tự động điều chỉnh lịch tưới:</p>
         </div>
-    </header>
-
-    <!-- NỘI DUNG CHÍNH -->
-    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 space-y-10 flex-grow w-full">
-
-        <!-- 2. THANH CHỌN "CHẾ ĐỘ THỜI TIẾT MIỀN BẮC" -->
-        <section id="weather-section" class="bg-white rounded-3xl shadow-md border border-emerald-100 p-5 sm:p-7">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">Tính năng Sáng tạo & Đổi mới</span>
-                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 mt-2 flex items-center gap-2">
-                        <span>🗺️ Chế Độ Thời Tiết Miền Bắc</span>
-                    </h2>
-                    <p class="text-slate-600 text-sm sm:text-base mt-1">
-                        Ba mẹ hãy chọn mùa hiện tại ở miền Bắc, trợ lý sẽ tự động tính lại lịch tưới nước chuẩn nhất cho từng cây!
-                    </p>
-                </div>
-
-                <!-- 3 Nút chuyển đổi mùa -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 shrink-0" role="group" aria-label="Chọn mùa miền Bắc">
-                    <button onclick="setSeason('summer')" id="btn-summer" class="season-btn flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm border-2 transition-all cursor-pointer">
-                        <span class="text-xl">☀️</span>
-                        <div class="text-left">
-                            <div>Mùa Hè</div>
-                            <div class="text-xs font-normal opacity-80">Nóng bức</div>
-                        </div>
-                    </button>
-
-                    <button onclick="setSeason('humid')" id="btn-humid" class="season-btn flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm border-2 transition-all cursor-pointer">
-                        <span class="text-xl">💧</span>
-                        <div class="text-left">
-                            <div>Mùa Nồm Ẩm</div>
-                            <div class="text-xs font-normal opacity-80">Độ ẩm cao</div>
-                        </div>
-                    </button>
-
-                    <button onclick="setSeason('winter')" id="btn-winter" class="season-btn flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm border-2 transition-all cursor-pointer">
-                        <span class="text-xl">❄️</span>
-                        <div class="text-left">
-                            <div>Mùa Đông</div>
-                            <div class="text-xs font-normal opacity-80">Lạnh, hanh khô</div>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Hộp hiển thị lời khuyên thời tiết động -->
-            <div id="weather-advice-box" class="rounded-2xl p-4 sm:p-5 border-2 transition-all duration-300 flex items-start gap-4">
-                <div id="weather-icon" class="text-3xl sm:text-4xl bg-white p-2.5 rounded-2xl shadow-sm shrink-0">☀️</div>
-                <div>
-                    <h3 id="weather-title" class="font-bold text-base sm:text-lg">Lời khuyên Mùa Hè (Nóng bức)</h3>
-                    <p id="weather-desc" class="text-sm sm:text-base mt-1 leading-relaxed"></p>
-                    <div id="weather-badge" class="inline-block mt-2.5 text-xs font-bold px-3 py-1 rounded-full bg-white/80"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3 & 4. DANH SÁCH 5 LOÀI CÂY QUỐC DÂN MIỀN BẮC + NÚT BẤM ĐÃ TƯỚI -->
-        <section id="plants-section">
-            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 flex items-center gap-2">
-                        <span>🪴 5 Loài Cây "Quốc Dân" Miền Bắc</span>
-                    </h2>
-                    <p class="text-slate-600 text-sm sm:text-base mt-1">
-                        Dễ sống, hợp khí hậu miền Bắc và cực kỳ tiết kiệm thời gian cho ba mẹ. Bấm nút khi tưới xong nhé!
-                    </p>
-                </div>
-                <button onclick="resetAllPlants()" class="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-slate-600 hover:text-emerald-700 bg-white hover:bg-emerald-50 border border-slate-200 px-3.5 py-2 rounded-xl shadow-sm transition cursor-pointer">
-                    <span>🔄</span>
-                    <span>Đặt lại tất cả để thử nghiệm</span>
-                </button>
-            </div>
-
-            <!-- Lưới hiển thị 5 thẻ cây -->
-            <div id="plants-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Các thẻ cây sẽ được tạo tự động bằng JavaScript để đồng bộ thời tiết -->
-            </div>
-        </section>
-
-        <!-- 5. GÓC "BÁC SĨ CÂY CẢNH 10 GIÂY" -->
-        <section id="doctor-section" class="bg-white rounded-3xl shadow-md border border-emerald-100 p-5 sm:p-8">
-            <div class="text-center max-w-2xl mx-auto mb-6">
-                <span class="text-xs font-bold uppercase tracking-wider text-teal-700 bg-teal-50 px-3 py-1 rounded-full">Chẩn đoán nhanh</span>
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800 mt-2">
-                    🩺 Bác Sĩ Cây Cảnh 10 Giây
-                </h2>
-                <p class="text-slate-600 text-sm sm:text-base mt-1">
-                    Cây nhà ba mẹ đang có dấu hiệu lạ? Hãy bấm vào triệu chứng bên dưới để biết cách cứu cây ngay lập tức!
-                </p>
-            </div>
-
-            <!-- 3 Nút triệu chứng -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
-                <button onclick="diagnose('yellow')" id="sym-yellow" class="symptom-btn group p-5 rounded-2xl border-2 border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50/60 transition-all text-center cursor-pointer">
-                    <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🍂</div>
-                    <div class="font-bold text-slate-800 text-lg">Lá vàng úa, mềm nhũn</div>
-                    <div class="text-xs text-slate-500 mt-1">Lá chuyển vàng từ gốc lên</div>
-                </button>
-
-                <button onclick="diagnose('brown')" id="sym-brown" class="symptom-btn group p-5 rounded-2xl border-2 border-slate-200 hover:border-orange-400 bg-slate-50 hover:bg-orange-50/60 transition-all text-center cursor-pointer">
-                    <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🔥</div>
-                    <div class="font-bold text-slate-800 text-lg">Lá khô cháy đầu mép</div>
-                    <div class="text-xs text-slate-500 mt-1">Đầu lá giòn, khô nâu</div>
-                </button>
-
-                <button onclick="diagnose('droop')" id="sym-droop" class="symptom-btn group p-5 rounded-2xl border-2 border-slate-200 hover:border-emerald-400 bg-slate-50 hover:bg-emerald-50/60 transition-all text-center cursor-pointer">
-                    <div class="text-4xl mb-2 group-hover:scale-110 transition-transform">🥀</div>
-                    <div class="font-bold text-slate-800 text-lg">Cây rũ xuống, ủ rũ</div>
-                    <div class="text-xs text-slate-500 mt-1">Thân và lá cúi gục xuống</div>
-                </button>
-            </div>
-
-            <!-- Kết quả chẩn đoán -->
-            <div id="diagnosis-result" class="hidden max-w-4xl mx-auto mt-6 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-5 sm:p-6 animate-pop">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                    <div id="diag-icon" class="text-4xl bg-white p-3 rounded-2xl shadow-sm shrink-0">💡</div>
-                    <div class="flex-grow">
-                        <div class="text-xs font-bold uppercase text-emerald-700">Đơn thuốc của Bác sĩ Cây Xanh:</div>
-                        <h3 id="diag-title" class="text-lg sm:text-xl font-extrabold text-slate-800 mt-0.5"></h3>
-                        <p id="diag-cause" class="text-sm sm:text-base text-slate-700 mt-1.5"></p>
-                        <div class="mt-3 bg-white p-3.5 rounded-xl border border-emerald-200 flex items-start gap-2.5">
-                            <span class="text-lg">✅</span>
-                            <p id="diag-action" class="text-sm sm:text-base font-bold text-emerald-800"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 6. MẸO STEM TÁI CHẾ 1 PHÚT -->
-        <section id="stem-tip-section" class="bg-gradient-to-br from-amber-50 via-yellow-50 to-emerald-50 rounded-3xl shadow-md border-2 border-amber-200 p-6 sm:p-8">
-            <div class="flex flex-col lg:flex-row items-center gap-6">
-                <!-- Hình minh họa SVG bình tưới nhỏ giọt tái chế -->
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-amber-100 shrink-0 flex flex-col items-center">
-                    <svg class="w-32 h-32" viewBox="0 0 120 120" fill="none">
-                        <!-- Chậu đất -->
-                        <path d="M25 80H95L88 112H32L25 80Z" fill="#D97706"/>
-                        <rect x="20" y="73" width="80" height="8" rx="4" fill="#B45309"/>
-                        <!-- Chai nhựa úp ngược -->
-                        <path d="M52 73V62L44 52V20C44 16.7 46.7 14 50 14H70C73.3 14 76 16.7 76 20V52L68 62V73H52Z" fill="#BAE6FD" stroke="#0284C7" stroke-width="2.5"/>
-                        <!-- Nước trong chai -->
-                        <path d="M45 36H75V51L67 61V72H53V61L45 51V36Z" fill="#38BDF8" fill-opacity="0.6"/>
-                        <!-- Giọt nước nhỏ giọt -->
-                        <path d="M60 76C60 76 56 81 56 83.5C56 85.7 57.8 87.5 60 87.5C62.2 87.5 64 85.7 64 83.5C64 81 60 76 60 76Z" fill="#0284C7"/>
-                        <!-- Cây nhỏ bên cạnh -->
-                        <path d="M82 73V56" stroke="#15803D" stroke-width="3" stroke-linecap="round"/>
-                        <path d="M82 62C75 62 72 57 73 52C78 52 82 56 82 62Z" fill="#22C55E"/>
-                        <path d="M82 58C89 58 92 53 91 48C86 48 82 52 82 58Z" fill="#4ADE80"/>
-                    </svg>
-                    <span class="text-xs font-bold text-amber-800 bg-amber-100 px-3 py-1 rounded-full mt-2">Mô hình STEM Tái Chế</span>
-                </div>
-
-                <div class="flex-grow">
-                    <div class="inline-flex items-center gap-1.5 bg-amber-200/80 text-amber-900 px-3 py-1 rounded-full text-xs font-bold mb-2">
-                        <span>♻️ Góc Sáng Tạo STEM 1 Phút</span>
-                        <span>•</span>
-                        <span>Bảo vệ môi trường</span>
-                    </div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">
-                        Tự Làm Bình Tưới Nhỏ Giọt Từ Chai Nhựa Cũ
-                    </h2>
-                    <p class="text-slate-700 text-sm sm:text-base mt-2">
-                        Khi cả nhà đi du lịch hoặc ba mẹ đi công tác 3–5 ngày không có ai tưới cây, ba mẹ và các con hãy cùng làm bình tưới tự động siêu đơn giản này nhé:
-                    </p>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-                        <div class="bg-white/90 p-3.5 rounded-2xl border border-amber-200">
-                            <div class="font-extrabold text-emerald-700 text-sm">Bước 1: Chuẩn bị</div>
-                            <p class="text-xs sm:text-sm text-slate-600 mt-1">Rửa sạch 1 chai nhựa cũ (500ml) và dùng đầu tăm nhọn đục 2 lỗ nhỏ xíu trên nắp chai.</p>
-                        </div>
-                        <div class="bg-white/90 p-3.5 rounded-2xl border border-amber-200">
-                            <div class="font-extrabold text-emerald-700 text-sm">Bước 2: Đổ nước</div>
-                            <p class="text-xs sm:text-sm text-slate-600 mt-1">Đổ đầy nước sạch vào chai và vặn chặt nắp lại.</p>
-                        </div>
-                        <div class="bg-white/90 p-3.5 rounded-2xl border border-amber-200">
-                            <div class="font-extrabold text-emerald-700 text-sm">Bước 3: Cắm vào chậu</div>
-                            <p class="text-xs sm:text-sm text-slate-600 mt-1">Dốc ngược chai, cắm sâu phần nắp xuống đất trong chậu. Nước sẽ tự nhỏ giọt từ từ nuôi cây!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="bg-emerald-900 text-emerald-100 py-6 mt-10">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-1.5">
-            <p class="font-bold text-base sm:text-lg text-white">
-                🌱 Trợ Lý Cây Xanh 5 Phút - Dành Cho Ba Mẹ Bận Rộn
-            </p>
-            <p class="text-xs sm:text-sm text-emerald-200">
-                Sản phẩm dự thi <strong>STEMpetition 2026</strong> • Hạng mục Sáng tạo & Đổi mới • Thực hiện bởi Nhóm Học Sinh Lớp 3
-            </p>
+        <div class="flex flex-wrap gap-2" id="season-buttons">
+          <button onclick="setSeason('summer')" id="btn-summer" class="px-4 py-2 rounded-xl font-bold text-sm transition bg-amber-500 text-white shadow">
+            ☀️ Mùa Hè (Nóng)
+          </button>
+          <button onclick="setSeason('humid')" id="btn-humid" class="px-4 py-2 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+            💧 Mùa Nồm Ẩm
+          </button>
+          <button onclick="setSeason('winter')" id="btn-winter" class="px-4 py-2 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200">
+            ❄️ Mùa Đông (Hanh)
+          </button>
         </div>
-    </footer>
+      </div>
 
-    <!-- 7. CHATBOT AI HÌNH NGƯỜI HƯỚNG DẪN ("CHUYÊN GIA CÂY XANH TÍ HON") -->
-    <div id="chatbot-wrapper" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 flex flex-col items-end">
+      <div id="season-alert" class="rounded-2xl p-4 bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3">
+        <span class="text-2xl">☀️</span>
+        <div>
+          <p class="font-bold">Đang áp dụng chế độ: Mùa Hè Miền Bắc (Nắng nóng, điều hòa nhiều)</p>
+          <p class="text-sm mt-0.5">Đất nhanh khô và phòng bật điều hòa dễ làm khô đầu lá. Hệ thống tự động rút ngắn chu kỳ nhắc tưới nước cho ba mẹ!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 5 LOÀI CÂY QUỐC DÂN MIỀN BẮC & NHẮC LỊCH TƯỚI -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold text-emerald-900">🌿 5 Loài Cây Dễ Chăm Cho Gia Đình Miền Bắc</h2>
+        <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Bấm nút để lưu ngày tưới</span>
+      </div>
+
+      <div id="plants-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Render bằng JS -->
+      </div>
+    </section>
+
+    <!-- 3. BÁC SĨ CÂY CẢNH 10 GIÂY -->
+    <section class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-emerald-100">
+      <h2 class="text-2xl font-bold text-emerald-900 mb-1">🩺 Bác Sĩ Cây Cảnh 10 Giây</h2>
+      <p class="text-sm text-slate-500 mb-5">Lá cây nhà ba mẹ đang có dấu hiệu lạ? Bấm chọn ngay để xem cách cứu cây trong 1 bước:</p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        <button onclick="diagnose('yellow')" id="diag-yellow" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-amber-400 text-left transition bg-slate-50/50">
+          <div class="text-2xl mb-1">🍂</div>
+          <div class="font-bold text-slate-800">Lá vàng úa, mềm nhũn</div>
+          <div class="text-xs text-slate-500">Thường gặp ở Kim Tiền, Lưỡi Hổ</div>
+        </button>
+
+        <button onclick="diagnose('dry')" id="diag-dry" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-orange-400 text-left transition bg-slate-50/50">
+          <div class="text-2xl mb-1">🥀</div>
+          <div class="font-bold text-slate-800">Lá rũ xuống, ủ rũ</div>
+          <div class="text-xs text-slate-500">Thường gặp ở Lan Ý, Trầu Bà</div>
+        </button>
+
+        <button onclick="diagnose('brown')" id="diag-brown" class="p-4 rounded-2xl border-2 border-slate-100 hover:border-emerald-400 text-left transition bg-slate-50/50">
+          <div class="text-2xl mb-1">🍁</div>
+          <div class="font-bold text-slate-800">Cháy khô đầu lá</div>
+          <div class="text-xs text-slate-500">Thường gặp ở Thiết Mộc Lan</div>
+        </button>
+      </div>
+
+      <div id="diagnosis-result" class="rounded-2xl p-5 bg-emerald-50/70 border border-emerald-200">
+        <p class="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">ĐƠN THUỐC CỦA BÁC SĨ CÂY XANH:</p>
+        <h3 id="diag-title" class="text-lg font-bold text-slate-900 mb-1">Bệnh: Cây đang "kêu cứu" vì khát nước!</h3>
+        <p id="diag-desc" class="text-sm text-slate-600 mb-3">Nguyên nhân: Đất trong chậu đã khô cứng, cây thiếu nước để vận chuyển chất dinh dưỡng lên nuôi lá (rất hay gặp ở cây Lan Ý).</p>
+        <div id="diag-cure" class="bg-white rounded-xl p-3 text-sm font-semibold text-emerald-800 border border-emerald-100">
+          ✅ Cách cứu 1 bước: Tưới từ từ một cốc nước sạch quanh gốc cây. Chỉ sau 1–2 tiếng cây sẽ tươi tỉnh trở lại!
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. GÓC SÁNG TẠO STEM: MÔ HÌNH MÁY LỌC NƯỚC MINI -->
+    <section class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 rounded-3xl p-6 md:p-8 border border-amber-200 shadow-sm">
+      <div class="flex flex-col md:flex-row items-center gap-6">
         
-        <!-- Cửa sổ khung chat (Ẩn mặc định, mở khi bấm nút nổi) -->
-        <div id="chat-window" class="hidden w-[calc(100vw-2rem)] sm:w-[400px] max-h-[82vh] bg-white rounded-3xl shadow-2xl border-2 border-emerald-200 flex flex-col overflow-hidden mb-3 animate-pop">
+        <!-- Minh họa SVG Mô hình Máy Lọc Nước Mini 4 tầng -->
+        <div class="w-full md:w-56 shrink-0 bg-white rounded-2xl p-4 border border-amber-200 flex flex-col items-center justify-center shadow-inner">
+          <svg viewBox="0 0 140 175" class="w-36 h-44">
+            <!-- Giá đỡ -->
+            <rect x="28" y="15" width="6" height="145" rx="3" fill="#94a3b8"/>
+            <rect x="106" y="15" width="6" height="145" rx="3" fill="#94a3b8"/>
+            <rect x="18" y="156" width="104" height="8" rx="4" fill="#64748b"/>
+
+            <!-- Thân tháp lọc (Chai nhựa dốc ngược) -->
+            <path d="M42 22 L98 22 L98 85 L78 106 L78 115 L62 115 L62 106 L42 85 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
             
-            <!-- Header khung chat với Avatar nhân vật làm vườn dễ thương -->
-            <div class="bg-gradient-to-r from-emerald-600 via-green-600 to-teal-600 text-white p-3.5 sm:p-4 flex items-center justify-between gap-3 shrink-0">
-                <div class="flex items-center gap-3">
-                    <!-- Avatar nhân vật hoạt hình người làm vườn -->
-                    <div id="gardener-avatar-box" class="w-13 h-13 bg-amber-100 rounded-2xl p-1 shadow-md border-2 border-white shrink-0 flex items-center justify-center relative">
-                        <svg class="w-11 h-11" viewBox="0 0 80 80" fill="none">
-                            <!-- Mũ rơm làm vườn -->
-                            <ellipse cx="40" cy="24" rx="30" ry="7" fill="#FBBF24" stroke="#B45309" stroke-width="2"/>
-                            <path d="M22 23C22 12 30 8 40 8C50 8 58 12 58 23H22Z" fill="#FDE047" stroke="#B45309" stroke-width="2"/>
-                            <!-- Dải ruy băng xanh trên mũ -->
-                            <rect x="22" y="19" width="36" height="4" rx="2" fill="#16A34A"/>
-                            <!-- Khuôn mặt nhân vật -->
-                            <circle cx="40" cy="40" r="16" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.5"/>
-                            <!-- Tóc mái hai bên -->
-                            <path d="M25 35C25 28 31 25 35 26C31 29 28 33 26 38Z" fill="#451A03"/>
-                            <path d="M55 35C55 28 49 25 45 26C49 29 52 33 54 38Z" fill="#451A03"/>
-                            <!-- Mắt cười long lanh -->
-                            <circle cx="34" cy="39" r="2.2" fill="#1E293B"/>
-                            <circle cx="46" cy="39" r="2.2" fill="#1E293B"/>
-                            <circle cx="34.8" cy="38.2" r="0.8" fill="#FFFFFF"/>
-                            <circle cx="46.8" cy="38.2" r="0.8" fill="#FFFFFF"/>
-                            <!-- Má hồng -->
-                            <ellipse cx="30" cy="43" rx="2.5" ry="1.5" fill="#FDA4AF"/>
-                            <ellipse cx="50" cy="43" rx="2.5" ry="1.5" fill="#FDA4AF"/>
-                            <!-- Nụ cười thân thiện -->
-                            <path d="M35 45C37 48.5 43 48.5 45 45" stroke="#9A3412" stroke-width="2.2" stroke-linecap="round"/>
-                            <!-- Áo và Tạp dề làm vườn màu xanh lá -->
-                            <path d="M20 74C20 61 28 56 40 56C52 56 60 61 60 74H20Z" fill="#FEF08A"/>
-                            <path d="M27 58H53L55 74H25L27 58Z" fill="#16A34A" stroke="#14532D" stroke-width="1.5"/>
-                            <!-- Dây tạp dề -->
-                            <path d="M31 56V62M49 56V62" stroke="#15803D" stroke-width="2.5" stroke-linecap="round"/>
-                            <!-- Biểu tượng mầm cây nhỏ trên túi tạp dề -->
-                            <path d="M40 69V64M40 66C37 66 36 64 37 62C39 62 40 64 40 66ZM40 65C43 65 44 63 43 61C41 61 40 63 40 65Z" stroke="#FEF08A" stroke-width="1.5" stroke-linecap="round"/>
-                        </svg>
-                        <!-- Chấm xanh online -->
-                        <span class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-lime-400 border-2 border-emerald-700 rounded-full"></span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <h3 class="font-extrabold text-sm sm:text-base leading-tight">Chuyên Gia Cây Xanh Tí Hon</h3>
-                        </div>
-                        <p id="gardener-status-text" class="text-xs text-emerald-100 mt-0.5 flex items-center gap-1">
-                            <span>🌻 Sẵn sàng giải đáp cho ba mẹ!</span>
-                        </p>
-                    </div>
-                </div>
+            <!-- Nước đầu vào -->
+            <rect x="44" y="25" width="52" height="12" fill="#bae6fd" opacity="0.8"/>
+            <text x="70" y="34" font-size="6.5" font-weight="bold" fill="#0369a1" text-anchor="middle">Nước vo gạo/rửa rau</text>
 
-                <!-- Nút thu nhỏ / đóng khung chat -->
-                <button onclick="toggleChatWindow()" title="Thu gọn khung chat" class="p-2 rounded-xl bg-white/15 hover:bg-white/25 text-white transition cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
-            </div>
+            <!-- Tầng 1: Sỏi to -->
+            <rect x="44" y="37" width="52" height="14" fill="#cbd5e1"/>
+            <circle cx="52" cy="44" r="4" fill="#64748b"/>
+            <circle cx="63" cy="43" r="4.5" fill="#475569"/>
+            <circle cx="75" cy="45" r="4" fill="#64748b"/>
+            <circle cx="87" cy="43" r="4" fill="#475569"/>
 
-            <!-- Khu vực hiển thị tin nhắn -->
-            <div id="chat-messages" class="p-4 space-y-3.5 overflow-y-auto flex-grow bg-emerald-50/40 chat-scroll min-h-[240px] max-h-[340px]">
-                <!-- Tin nhắn chào mừng ban đầu -->
-                <div class="flex items-start gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0 text-base shadow-sm">
-                        🧑‍🌾
-                    </div>
-                    <div class="bg-white border border-emerald-100 text-slate-700 rounded-2xl rounded-tl-none p-3.5 shadow-sm text-xs sm:text-sm leading-relaxed">
-                        <p class="font-bold text-emerald-700 mb-1">Cháu chào cô chú và ba mẹ ạ! 🌱</p>
-                        <p>Cháu là <strong>Trợ lý Cây Xanh Tí Hon</strong> do nhóm học sinh lớp 3 lập trình cho cuộc thi <strong>STEMpetition 2026</strong>.</p>
-                        <p class="mt-1.5">Ba mẹ đang trồng cây gì khác ở ban công, phòng khách hay muốn hỏi mẹo chăm cây mùa miền Bắc thì cứ nhắn cho cháu nhé!</p>
-                    </div>
-                </div>
-            </div>
+            <!-- Tầng 2: Cát sạch -->
+            <rect x="44" y="51" width="52" height="14" fill="#fde68a"/>
+            <text x="70" y="60" font-size="6.5" font-weight="bold" fill="#92400e" text-anchor="middle">Tầng Cát Sạch</text>
 
-            <!-- Các nút câu hỏi gợi ý bấm nhanh (Quick Replies) -->
-            <div class="px-3.5 py-2.5 bg-white border-t border-emerald-100 shrink-0">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                    <span>💡 Câu hỏi gợi ý cho ba mẹ (Bấm thử):</span>
-                </div>
-                <div class="flex flex-wrap gap-1.5">
-                    <button onclick="sendQuickQuestion('Cây Hoa Giấy ban công làm sao để ra hoa nhiều?')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-1.5 rounded-xl border border-emerald-200 transition text-left cursor-pointer">
-                        🌸 Hoa Giấy ra hoa nhiều?
-                    </button>
-                    <button onclick="sendQuickQuestion('Cây Bàng Singapore trong nhà bị rụng lá thì phải làm sao?')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-1.5 rounded-xl border border-emerald-200 transition text-left cursor-pointer">
-                        🍃 Bàng Singapore rụng lá?
-                    </button>
-                    <button onclick="sendQuickQuestion('Cây nào trồng được trong nhà tắm thiếu sáng ở miền Bắc?')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 font-semibold px-2.5 py-1.5 rounded-xl border border-amber-200 transition text-left cursor-pointer">
-                        🚿 Cây trồng trong nhà tắm?
-                    </button>
-                    <button onclick="sendQuickQuestion('Cách pha nước vo gạo tưới cây sao cho không bị mùi và kiến?')" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 font-semibold px-2.5 py-1.5 rounded-xl border border-amber-200 transition text-left cursor-pointer">
-                        🍚 Tưới nước vo gạo đúng cách?
-                    </button>
-                </div>
-            </div>
+            <!-- Tầng 3: Than hoạt tính -->
+            <rect x="44" y="65" width="52" height="16" fill="#334155"/>
+            <text x="70" y="75" font-size="6.5" font-weight="bold" fill="#f8fafc" text-anchor="middle">Than Hoạt Tính</text>
 
-            <!-- Ô nhập câu hỏi -->
-            <form id="chat-form" onsubmit="handleChatSubmit(event)" class="p-3 bg-slate-50 border-t border-slate-200 flex items-center gap-2 shrink-0">
-                <input 
-                    type="text" 
-                    id="chat-input" 
-                    placeholder="Nhập tên cây hoặc thắc mắc của ba mẹ..." 
-                    class="flex-grow bg-white border border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm outline-none transition"
-                    autocomplete="off"
-                >
-                <button 
-                    type="submit" 
-                    id="chat-send-btn"
-                    class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold px-4 py-2.5 rounded-2xl shadow-sm hover:shadow transition flex items-center gap-1.5 text-xs sm:text-sm shrink-0 cursor-pointer"
-                >
-                    <span>Gửi</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                    </svg>
-                </button>
-            </form>
+            <!-- Tầng 4: Bông gòn -->
+            <path d="M44 81 L96 81 L78 102 L62 102 Z" fill="#ffffff"/>
+            <text x="70" y="92" font-size="6" font-weight="bold" fill="#475569" text-anchor="middle">Bông Gòn</text>
+
+            <!-- Giọt nước sạch rơi xuống -->
+            <path d="M70 118 C70 118 66 124 66 126.5 C66 128.7 67.8 130.5 70 130.5 C72.2 130.5 74 128.7 74 126.5 C74 124 70 118 70 118 Z" fill="#0ea5e9"/>
+
+            <!-- Cốc hứng nước sạch dưới đáy -->
+            <rect x="48" y="132" width="44" height="24" rx="4" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+            <rect x="50" y="141" width="40" height="13" rx="2" fill="#38bdf8" opacity="0.7"/>
+            <text x="70" y="150" font-size="6.5" font-weight="bold" fill="#0c4a6e" text-anchor="middle">Nước Sạch Tưới Cây</text>
+          </svg>
+          <span class="mt-2 text-xs font-bold text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
+            Mô hình Máy Lọc Nước Mini
+          </span>
         </div>
 
-        <!-- Nút nổi (Floating Button) + Bong bóng chào mời ở góc dưới bên phải -->
-        <div class="flex items-center gap-3">
-            <!-- Bong bóng lời mời dễ thương -->
-            <div id="chat-callout" onclick="toggleChatWindow()" class="bg-white border-2 border-amber-300 shadow-lg rounded-2xl px-3.5 py-2.5 cursor-pointer hover:scale-105 transition-transform flex items-center gap-2 max-w-[230px] sm:max-w-none">
-                <span class="text-lg animate-bounce">👋</span>
-                <div class="text-xs sm:text-sm font-bold text-slate-800 leading-tight">
-                    Hỏi <span class="text-emerald-600">Bác Làm Vườn Tí Hon</span> về mọi loài cây!
-                </div>
-            </div>
+        <!-- Nội dung hướng dẫn -->
+        <div class="flex-1">
+          <span class="inline-block text-xs font-bold bg-amber-200/80 text-amber-900 px-3 py-1 rounded-full mb-2">
+            ♻️ Góc Sáng Tạo STEM • Tái sử dụng nước thông minh
+          </span>
+          <h2 class="text-2xl font-bold text-slate-900 mb-2">
+            Tái Sử Dụng Nước Từ Máy Lọc Nước Mini Để Tưới Cây
+          </h2>
+          <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+            Kết hợp cùng sản phẩm <strong>Mô hình Máy Lọc Nước Mini</strong> của nhóm: tận dụng nước vo gạo, nước rửa rau sau khi nấu ăn lọc qua tháp lọc nhiều tầng để có nguồn nước sạch tưới cây mỗi ngày, vừa tiết kiệm nước vừa bảo vệ môi trường!
+          </p>
 
-            <!-- Nút tròn mở khung chat có hình nhân vật -->
-            <button onclick="toggleChatWindow()" aria-label="Mở trợ lý hỏi đáp cây xanh" class="w-16 h-16 sm:w-18 sm:h-18 rounded-full bg-gradient-to-br from-amber-300 via-yellow-300 to-emerald-400 p-1 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer border-4 border-white relative group">
-                <div class="w-full h-full bg-amber-50 rounded-full flex items-center justify-center overflow-hidden">
-                    <svg class="w-12 h-12 sm:w-14 sm:h-14 group-hover:scale-110 transition-transform" viewBox="0 0 80 80" fill="none">
-                        <!-- Mũ rơm -->
-                        <ellipse cx="40" cy="24" rx="30" ry="7" fill="#FBBF24" stroke="#B45309" stroke-width="2"/>
-                        <path d="M22 23C22 12 30 8 40 8C50 8 58 12 58 23H22Z" fill="#FDE047" stroke="#B45309" stroke-width="2"/>
-                        <rect x="22" y="19" width="36" height="4" rx="2" fill="#16A34A"/>
-                        <!-- Khuôn mặt -->
-                        <circle cx="40" cy="40" r="16" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.5"/>
-                        <path d="M25 35C25 28 31 25 35 26C31 29 28 33 26 38Z" fill="#451A03"/>
-                        <path d="M55 35C55 28 49 25 45 26C49 29 52 33 54 38Z" fill="#451A03"/>
-                        <circle cx="34" cy="39" r="2.2" fill="#1E293B"/>
-                        <circle cx="46" cy="39" r="2.2" fill="#1E293B"/>
-                        <ellipse cx="30" cy="43" rx="2.5" ry="1.5" fill="#FDA4AF"/>
-                        <ellipse cx="50" cy="43" rx="2.5" ry="1.5" fill="#FDA4AF"/>
-                        <path d="M35 45C37 48.5 43 48.5 45 45" stroke="#9A3412" stroke-width="2.2" stroke-linecap="round"/>
-                        <!-- Tạp dề xanh -->
-                        <path d="M20 74C20 61 28 56 40 56C52 56 60 61 60 74H20Z" fill="#FEF08A"/>
-                        <path d="M27 58H53L55 74H25L27 58Z" fill="#16A34A" stroke="#14532D" stroke-width="1.5"/>
-                    </svg>
-                </div>
-                <!-- Nhãn AI nhỏ xinh -->
-                <span class="absolute -top-1 -left-1 bg-emerald-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full border-2 border-white shadow">
-                    AI 24/7
-                </span>
-            </button>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-white/90 rounded-2xl p-3.5 border border-amber-200/80">
+              <div class="font-bold text-amber-800 text-sm mb-1">Bước 1: Thu gom nước</div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Giữ lại nước vo gạo hoặc nước rửa rau của gia đình, gạn bỏ cặn rác lớn trước khi đổ vào phễu lọc.
+              </p>
+            </div>
+            <div class="bg-white/90 rounded-2xl p-3.5 border border-amber-200/80">
+              <div class="font-bold text-amber-800 text-sm mb-1">Bước 2: Lọc qua máy mini</div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Cho nước chảy qua 4 tầng lọc (sỏi, cát sạch, than hoạt tính, bông gòn) để khử mùi và giữ lại tạp chất bẩn.
+              </p>
+            </div>
+            <div class="bg-white/90 rounded-2xl p-3.5 border border-amber-200/80">
+              <div class="font-bold text-amber-800 text-sm mb-1">Bước 3: Tưới cây an toàn</div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Hứng nước trong veo ở bình chứa bên dưới để tưới cho 5 loài cây trong nhà, giúp cây xanh tốt, không nấm mốc.
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-emerald-900 text-emerald-100 mt-14 py-6 text-center px-4">
+    <p class="font-bold text-base text-white">🌱 Trợ Lý Cây Xanh 5 Phút - Dành Cho Ba Mẹ Bận Rộn</p>
+    <p class="text-xs text-emerald-300 mt-1">Sản phẩm dự thi STEMpetition 2026 • Hạng mục Sáng tạo & Đổi mới • Thực hiện bởi Nhóm Học Sinh Lớp 3</p>
+  </footer>
+
+  <!-- CHATBOT NHÂN VẬT CHUYÊN GIA CÂY XANH TÍ HON -->
+  <div class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <!-- Cửa sổ Chat -->
+    <div id="chat-window" class="hidden w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border-2 border-emerald-500 overflow-hidden mb-3">
+      <!-- Header Chat -->
+      <div class="bg-gradient-to-r from-emerald-600 to-green-500 text-white p-3.5 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center border-2 border-white shrink-0">
+            <!-- Avatar mini -->
+            <svg viewBox="0 0 64 64" class="w-9 h-9">
+              <ellipse cx="32" cy="18" rx="22" ry="6" fill="#f59e0b"/>
+              <path d="M18 18 Q32 4 46 18 Z" fill="#fbbf24"/>
+              <circle cx="32" cy="34" r="14" fill="#fde68a"/>
+              <circle cx="27" cy="32" r="2" fill="#1e293b"/>
+              <circle cx="37" cy="32" r="2" fill="#1e293b"/>
+              <path d="M27 39 Q32 43 37 39" stroke="#1e293b" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M20 48 L44 48 L48 62 L16 62 Z" fill="#16a34a"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm leading-tight">Chuyên gia Cây Xanh Tí Hon</h3>
+            <span class="text-[11px] text-emerald-100 flex items-center gap-1">
+              <span class="w-2 h-2 bg-lime-300 rounded-full inline-block"></span> Sẵn sàng hỗ trợ ba mẹ 24/7
+            </span>
+          </div>
+        </div>
+        <button onclick="toggleChat()" class="text-white/80 hover:text-white text-xl font-bold px-2">&times;</button>
+      </div>
+
+      <!-- Nội dung tin nhắn -->
+      <div id="chat-messages" class="h-64 overflow-y-auto p-3.5 space-y-3 bg-emerald-50/40 chat-scroll text-sm">
+        <div class="flex items-start gap-2">
+          <div class="bg-white border border-emerald-200 rounded-2xl rounded-tl-none p-3 shadow-sm text-slate-700">
+            Chào cô chú và các bạn! Con là <strong>Chuyên gia Cây Xanh Tí Hon</strong> 🌱. Ba mẹ đang trồng thêm cây gì ở nhà (như Hoa Giấy, Sen Đá, Cây Hạnh Phúc, Bàng Singapore...) cứ hỏi con nhé!
+          </div>
+        </div>
+      </div>
+
+      <!-- Gợi ý câu hỏi nhanh -->
+      <div class="px-3 py-2 bg-white border-t border-slate-100 flex gap-1.5 overflow-x-auto">
+        <button onclick="askQuick('Cách chăm Hoa Giấy ra nhiều hoa?')" class="shrink-0 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-1.5 rounded-full border border-emerald-200">
+          🌸 Hoa Giấy
+        </button>
+        <button onclick="askQuick('Chăm Sen Đá mùa nồm miền Bắc?')" class="shrink-0 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-1.5 rounded-full border border-emerald-200">
+          🌵 Sen Đá
+        </button>
+        <button onclick="askQuick('Nước lọc từ máy mini tưới cây nào tốt?')" class="shrink-0 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-2.5 py-1.5 rounded-full border border-emerald-200">
+          💧 Nước máy lọc mini
+        </button>
+      </div>
+
+      <!-- Ô nhập câu hỏi -->
+      <form onsubmit="handleChatSubmit(event)" class="p-2.5 bg-white border-t border-slate-200 flex gap-2">
+        <input id="chat-input" type="text" placeholder="Nhập tên cây hoặc câu hỏi..." class="flex-1 text-sm px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500" />
+        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-sm transition">
+          Gửi
+        </button>
+      </form>
     </div>
 
-    <!-- JAVASCRIPT XỬ LÝ TƯƠNG TÁC -->
-    <script>
-        // 1. Dữ liệu chế độ thời tiết miền Bắc
-        const seasonsData = {
-            summer: {
-                name: 'Mùa Hè (Nóng bức)',
-                icon: '☀️',
-                title: 'Chế độ Mùa Hè: Trời nắng nóng, nước bốc hơi nhanh',
-                desc: 'Nhiệt độ miền Bắc mùa hè thường trên 35°C, đất nhanh khô. Trợ lý đã tự động rút ngắn số ngày chờ để nhắc ba mẹ tưới sớm hơn, giúp cây luôn mát mẻ!',
-                badge: '⚡ Điều chỉnh tự động: Tưới sớm hơn 2–3 ngày so với bình thường',
-                boxClass: 'bg-orange-50 border-orange-300 text-orange-950',
-                btnActiveClass: 'bg-orange-500 text-white border-orange-600 shadow-md scale-[1.02]',
-                dayOffset: -2 // Rút ngắn số ngày giữa 2 lần tưới
-            },
-            humid: {
-                name: 'Mùa Nồm Ẩm (Độ ẩm cao)',
-                icon: '💧',
-                title: 'Cảnh báo Mùa Nồm Ẩm: Trời nồm, độ ẩm không khí rất cao!',
-                desc: 'Đặc trưng miền Bắc tháng 2–4 là trời nồm ẩm, mặt đất lâu khô. Ba mẹ cần GIẢM tưới nước để tránh cây bị úng thối rễ và nấm mốc nhé!',
-                badge: '⚠️ Điều chỉnh tự động: Kéo dài thêm +4 ngày mới cần tưới lại',
-                boxClass: 'bg-amber-50 border-amber-400 text-amber-950',
-                btnActiveClass: 'bg-amber-500 text-white border-amber-600 shadow-md scale-[1.02]',
-                dayOffset: 4 // Kéo dài số ngày giữa 2 lần tưới
-            },
-            winter: {
-                name: 'Mùa Đông (Lạnh, hanh khô)',
-                icon: '❄️',
-                title: 'Chế độ Mùa Đông: Trời lạnh và gió mùa Đông Bắc',
-                desc: 'Mùa đông cây phát triển chậm lại. Ba mẹ nên tưới ít hơn, dùng nước ấm nhẹ (không dùng nước quá lạnh) và đặt cây tránh gió lùa ngoài ban công.',
-                badge: '🧣 Điều chỉnh tự động: Kéo dài thêm +2 ngày & nhắc tránh gió lạnh',
-                boxClass: 'bg-sky-50 border-sky-300 text-sky-950',
-                btnActiveClass: 'bg-sky-600 text-white border-sky-700 shadow-md scale-[1.02]',
-                dayOffset: 2 // Kéo dài nhẹ số ngày
-            }
-        };
+    <!-- Nút bấm mở Chatbot hình người -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleChat()" id="chat-bubble-label" class="bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 font-bold text-xs px-3.5 py-2 rounded-full shadow-md transition">
+        👋 Hỏi Bác Làm Vườn Tí Hon về mọi loài cây!
+      </button>
+      <button onclick="toggleChat()" id="bot-avatar-btn" class="w-16 h-16 rounded-full bg-gradient-to-b from-emerald-500 to-green-700 p-1 shadow-xl border-2 border-white bot-float flex items-center justify-center relative">
+        <span class="absolute -top-1 -left-1 bg-emerald-900 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-white">AI 24/7</span>
+        <!-- Nhân vật Chuyên gia Cây Xanh Tí Hon -->
+        <svg viewBox="0 0 80 80" class="w-14 h-14">
+          <!-- Mũ rơm -->
+          <ellipse cx="40" cy="22" rx="28" ry="7" fill="#f59e0b"/>
+          <path d="M22 22 Q40 4 58 22 Z" fill="#fbbf24"/>
+          <rect x="23" y="19" width="34" height="3.5" rx="1.5" fill="#15803d"/>
+          <!-- Khuôn mặt -->
+          <circle cx="40" cy="40" r="16" fill="#fde68a"/>
+          <!-- Má hồng -->
+          <circle cx="30" cy="43" r="2.5" fill="#fca5a5" opacity="0.8"/>
+          <circle cx="50" cy="43" r="2.5" fill="#fca5a5" opacity="0.8"/>
+          <!-- Mắt -->
+          <circle cx="34" cy="38" r="2.3" fill="#1e293b"/>
+          <circle cx="46" cy="38" r="2.3" fill="#1e293b"/>
+          <!-- Miệng cười -->
+          <path d="M34 45 Q40 50 46 45" stroke="#1e293b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <!-- Áo tạp dề xanh -->
+          <path d="M22 57 Q40 53 58 57 L62 76 L18 76 Z" fill="#16a34a"/>
+          <rect x="31" y="58" width="18" height="16" rx="2" fill="#dcfce7"/>
+          <!-- Mầm cây nhỏ trên túi áo -->
+          <path d="M40 69 L40 63 M40 65 Q36 62 35 64 M40 64 Q44 61 45 63" stroke="#15803d" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 
-        // 2. Dữ liệu 5 loài cây "quốc dân" ở miền Bắc
-        const plantsData = [
-            {
-                id: 'trau-ba',
-                name: 'Cây Trầu Bà',
-                subtitle: 'Trồng thủy sinh / Trong nhà',
-                stars: 5,
-                baseDays: 10,
-                actionLabel: 'Đã thay nước',
-                verb: 'thay nước',
-                location: 'Bàn làm việc, kệ tivi',
-                tip: 'Cực kỳ dễ sống trong nước! Ba mẹ không cần tưới mỗi ngày, chỉ cần thay nước sạch định kỳ là lá xanh mướt.',
-                svg: `
-                    <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
-                        <!-- Bình thủy tinh -->
-                        <path d="M32 52C26 60 25 78 34 86H66C75 78 74 60 68 52H32Z" fill="#E0F2FE" stroke="#38BDF8" stroke-width="2.5"/>
-                        <rect x="35" y="47" width="30" height="6" rx="3" fill="#BAE6FD" stroke="#38BDF8" stroke-width="2"/>
-                        <!-- Rễ trong nước -->
-                        <path d="M46 53C44 65 40 72 42 78M50 53C50 66 51 74 49 80M54 53C57 64 60 72 57 78" stroke="#92400E" stroke-width="1.8" stroke-linecap="round"/>
-                        <!-- Lá trầu bà hình tim -->
-                        <path d="M50 48C42 36 24 34 22 44C20 53 36 56 50 48Z" fill="#22C55E"/>
-                        <path d="M50 48C58 34 76 32 78 42C80 51 64 55 50 48Z" fill="#16A34A"/>
-                        <path d="M50 48C43 30 45 16 53 16C61 16 60 32 50 48Z" fill="#4ADE80"/>
-                    </svg>
-                `
-            },
-            {
-                id: 'luoi-ho',
-                name: 'Cây Lưỡi Hổ',
-                subtitle: 'Phòng ngủ / Lọc bụi mịn',
-                stars: 5,
-                baseDays: 14,
-                actionLabel: 'Hôm nay đã tưới',
-                verb: 'tưới nước',
-                location: 'Phòng ngủ, góc phòng khách',
-                tip: 'Nhả khí Oxy ban đêm, chịu hạn siêu đỉnh. Ba mẹ có bận quên tưới 2 tuần cây vẫn sống khỏe, rất ghét bị úng nước.',
-                svg: `
-                    <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
-                        <!-- Chậu trắng hiện đại -->
-                        <path d="M30 64H70L65 88H35L30 64Z" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5"/>
-                        <!-- Lá lưỡi hổ vươn thẳng có viền vàng -->
-                        <path d="M38 64C35 45 36 28 41 22C45 28 46 46 44 64H38Z" fill="#15803D" stroke="#FACC15" stroke-width="1.8"/>
-                        <path d="M56 64C54 46 56 30 61 24C65 30 65 46 62 64H56Z" fill="#16A34A" stroke="#FACC15" stroke-width="1.8"/>
-                        <path d="M46 64C44 40 46 18 50 12C54 18 56 40 54 64H46Z" fill="#22C55E" stroke="#FACC15" stroke-width="2"/>
-                    </svg>
-                `
-            },
-            {
-                id: 'kim-tien',
-                name: 'Cây Kim Tiền',
-                subtitle: 'Tài lộc / Phòng khách',
-                stars: 4,
-                baseDays: 7,
-                actionLabel: 'Hôm nay đã tưới',
-                verb: 'tưới nước',
-                location: 'Phòng khách, lối vào nhà',
-                tip: 'Thân cây mọng nước sẵn nên không cần tưới nhiều. Đặc biệt lưu ý giảm tưới vào mùa nồm miền Bắc kẻo thối củ.',
-                svg: `
-                    <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
-                        <!-- Chậu gốm -->
-                        <path d="M31 65H69L64 88H36L31 65Z" fill="#F59E0B"/>
-                        <rect x="28" y="60" width="44" height="6" rx="3" fill="#D97706"/>
-                        <!-- Thân và các cặp lá đối xứng -->
-                        <path d="M43 60L39 24M57 60L61 24" stroke="#15803D" stroke-width="3" stroke-linecap="round"/>
-                        <ellipse cx="33" cy="48" rx="7" ry="4" transform="rotate(-20 33 48)" fill="#22C55E"/>
-                        <ellipse cx="46" cy="46" rx="7" ry="4" transform="rotate(20 46 46)" fill="#16A34A"/>
-                        <ellipse cx="32" cy="35" rx="7" ry="4" transform="rotate(-20 32 35)" fill="#4ADE80"/>
-                        <ellipse cx="45" cy="33" rx="7" ry="4" transform="rotate(20 45 33)" fill="#22C55E"/>
-                        <ellipse cx="54" cy="46" rx="7" ry="4" transform="rotate(-20 54 46)" fill="#16A34A"/>
-                        <ellipse cx="67" cy="48" rx="7" ry="4" transform="rotate(20 67 48)" fill="#22C55E"/>
-                        <ellipse cx="55" cy="33" rx="7" ry="4" transform="rotate(-20 55 33)" fill="#22C55E"/>
-                        <ellipse cx="68" cy="35" rx="7" ry="4" transform="rotate(20 68 35)" fill="#4ADE80"/>
-                    </svg>
-                `
-            },
-            {
-                id: 'thiet-moc-lan',
-                name: 'Cây Thiết Mộc Lan',
-                subtitle: 'Phát Tài / Ban công',
-                stars: 4,
-                baseDays: 7,
-                actionLabel: 'Hôm nay đã tưới',
-                verb: 'tưới nước',
-                location: 'Góc phòng khách, ban công',
-                tip: 'Dáng cây khỏe khoắn, sống bền nhiều năm. Chỉ cần tưới khi mặt đất trên chậu khô và thỉnh thoảng lau bụi trên lá.',
-                svg: `
-                    <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
-                        <!-- Chậu cao -->
-                        <path d="M33 62H67L63 88H37L33 62Z" fill="#78350F"/>
-                        <!-- Khúc gỗ thân cây -->
-                        <rect x="45" y="34" width="10" height="28" rx="2" fill="#92400E"/>
-                        <!-- Tán lá dài rủ -->
-                        <path d="M50 36C38 26 24 30 20 40C30 38 40 38 50 36Z" fill="#22C55E"/>
-                        <path d="M50 36C62 26 76 30 80 40C70 38 60 38 50 36Z" fill="#16A34A"/>
-                        <path d="M50 34C40 18 32 16 26 22C36 24 44 28 50 34Z" fill="#4ADE80"/>
-                        <path d="M50 34C60 18 68 16 74 22C64 24 56 28 50 34Z" fill="#22C55E"/>
-                    </svg>
-                `
-            },
-            {
-                id: 'lan-y',
-                name: 'Cây Lan Ý (Bạch Môn)',
-                subtitle: 'Báo khát thông minh',
-                stars: 4,
-                baseDays: 5,
-                actionLabel: 'Hôm nay đã tưới',
-                verb: 'tưới nước',
-                location: 'Bàn học, phòng khách thiếu nắng',
-                tip: 'Cây biết "nhắc" ba mẹ: khi khát nước lá sẽ rũ xuống, chỉ cần tưới một chút nước là sau 1–2 tiếng cây lại đứng thẳng tươi tắn!',
-                svg: `
-                    <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
-                        <!-- Chậu xanh mint -->
-                        <path d="M32 64H68L63 88H37L32 64Z" fill="#14B8A6"/>
-                        <!-- Lá xanh -->
-                        <path d="M46 64C34 52 24 54 24 60C32 64 40 64 46 64Z" fill="#16A34A"/>
-                        <path d="M54 64C66 52 76 54 76 60C68 64 60 64 54 64Z" fill="#15803D"/>
-                        <path d="M48 64C38 44 34 36 38 32C44 38 48 50 48 64Z" fill="#22C55E"/>
-                        <!-- Bông hoa trắng thanh lịch -->
-                        <path d="M54 64V32" stroke="#15803D" stroke-width="2.5"/>
-                        <path d="M54 34C48 26 50 16 56 14C62 18 62 28 54 34Z" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5"/>
-                        <rect x="53.5" y="21" width="3" height="9" rx="1.5" fill="#FACC15"/>
-                    </svg>
-                `
-            }
-        ];
+  <script>
+    // Dữ liệu 5 loài cây miền Bắc
+    const plantsData = [
+      {
+        id: 'trauba',
+        name: 'Cây Trầu Bà Thủy Sinh',
+        emoji: '🌿',
+        tag: 'Để bàn làm việc / Kệ TV',
+        stars: '⭐⭐⭐⭐⭐',
+        desc: 'Cực kỳ dễ sống trong phòng điều hòa, thiếu nắng. Lọc khí độc từ thiết bị điện tử rất tốt.',
+        waterRule: {
+          summer: 'Thay nước 1 tuần/lần (rửa nhẹ rễ)',
+          humid: 'Thay nước 2 tuần/lần (tránh úng lá)',
+          winter: 'Thay nước 2 tuần/lần bằng nước ấm nhẹ'
+        },
+        nextDays: { summer: 7, humid: 14, winter: 14 },
+        btnText: 'Đã thay nước hôm nay'
+      },
+      {
+        id: 'luoiho',
+        name: 'Cây Lưỡi Hổ',
+        emoji: '🪴',
+        tag: 'Phòng ngủ / Phòng khách',
+        stars: '⭐⭐⭐⭐⭐',
+        desc: 'Nhả khí Oxy vào ban đêm giúp ngủ ngon, hút bụi mịn PM2.5. Siêu chịu hạn, quên tưới vẫn sống.',
+        waterRule: {
+          summer: 'Tưới ít nước 10 ngày/lần',
+          humid: 'Tưới cực ít 20 ngày/lần (ghét ẩm ướt)',
+          winter: 'Tưới 15 ngày/lần vào buổi trưa ấm'
+        },
+        nextDays: { summer: 10, humid: 20, winter: 15 },
+        btnText: 'Hôm nay đã tưới'
+      },
+      {
+        id: 'kimtien',
+        name: 'Cây Kim Tiền',
+        emoji: '💰',
+        tag: 'Phòng khách / Tài lộc',
+        stars: '⭐⭐⭐⭐☆',
+        desc: 'Lá xanh bóng sang trọng, mang ý nghĩa may mắn. Thân mọng nước sẵn nên không cần tưới nhiều.',
+        waterRule: {
+          summer: 'Tưới 1 lần/tuần (khoảng 1 cốc nước)',
+          humid: 'Giảm tưới còn 12–14 ngày/lần kẻo thối củ',
+          winter: 'Tưới 10 ngày/lần, lau bụi trên lá'
+        },
+        nextDays: { summer: 7, humid: 14, winter: 10 },
+        btnText: 'Hôm nay đã tưới'
+      },
+      {
+        id: 'thietmoclan',
+        name: 'Cây Thiết Mộc Lan',
+        emoji: '🌴',
+        tag: 'Góc phòng / Ban công',
+        stars: '⭐⭐⭐⭐☆',
+        desc: 'Dáng cao thanh lịch, bền bỉ qua nhiều năm ở khí hậu miền Bắc, thanh lọc không khí hiệu quả.',
+        waterRule: {
+          summer: 'Tưới 2 lần/tuần khi mặt đất khô',
+          humid: 'Tưới 1 lần/tuần, mở cửa cho thoáng gió',
+          winter: 'Tưới 1 lần/tuần, tránh gió lùa lạnh'
+        },
+        nextDays: { summer: 4, humid: 7, winter: 7 },
+        btnText: 'Hôm nay đã tưới'
+      },
+      {
+        id: 'lany',
+        name: 'Cây Lan Ý (Bạch Môn)',
+        emoji: '🤍',
+        tag: 'Bàn trà / Góc học tập',
+        stars: '⭐⭐⭐⭐☆',
+        desc: 'Có hoa trắng thanh lịch. Rất thông minh: khi khát lá tự rũ xuống để nhắc ba mẹ tưới nước!',
+        waterRule: {
+          summer: 'Tưới 2 lần/tuần giữ đất hơi ẩm',
+          humid: 'Tưới 1 lần/tuần, kiểm tra mặt đất trước',
+          winter: 'Tưới 1 lần/tuần, xịt sương nhẹ lên lá'
+        },
+        nextDays: { summer: 3, humid: 7, winter: 7 },
+        btnText: 'Hôm nay đã tưới'
+      }
+    ];
 
-        // 3. Dữ liệu Bác sĩ cây cảnh 10 giây
-        const diagnosisData = {
-            yellow: {
-                icon: '🍂',
-                title: 'Bệnh: Cây bị "uống quá no" (Thừa nước / Úng rễ)',
-                cause: 'Nguyên nhân: Ba mẹ tưới nước quá nhiều hoặc trời miền Bắc đang nồm ẩm khiến đất không thoát nước kịp, làm rễ cây bị ngộp.',
-                action: 'Cách cứu 1 bước: Ngừng tưới nước ngay trong 7–10 ngày, chuyển cây ra chỗ thoáng gió và cắt bỏ các lá vàng.'
-            },
-            brown: {
-                icon: '🔥',
-                title: 'Bệnh: Cây bị khô không khí hoặc cháy nắng',
-                cause: 'Nguyên nhân: Cây đặt gần cục nóng điều hòa, ánh nắng gắt buổi trưa hoặc không khí mùa đông quá hanh khô.',
-                action: 'Cách cứu 1 bước: Chuyển cây vào chỗ râm mát, tránh xa điều hòa và dùng bình xịt phun sương nhẹ lên lá.'
-            },
-            droop: {
-                icon: '🥀',
-                title: 'Bệnh: Cây đang "kêu cứu" vì khát nước!',
-                cause: 'Nguyên nhân: Đất trong chậu đã khô cứng, cây thiếu nước để vận chuyển chất dinh dưỡng lên nuôi lá (rất hay gặp ở cây Lan Ý).',
-                action: 'Cách cứu 1 bước: Tưới từ từ một cốc nước sạch quanh gốc cây. Chỉ sau 1–2 tiếng cây sẽ tươi tỉnh trở lại!'
-            }
-        };
+    let currentSeason = 'summer';
+    const wateredStatus = {};
 
-        // Trạng thái hiện tại của ứng dụng
-        let currentSeason = 'summer';
-        // Lưu trạng thái đã tưới của từng cây: { 'trau-ba': true/false }
-        let wateredState = {};
+    function setSeason(season) {
+      currentSeason = season;
 
-        // Hàm tính số ngày cần chờ dựa theo mùa miền Bắc
-        function getAdjustedDays(baseDays) {
-            const offset = seasonsData[currentSeason].dayOffset;
-            return Math.max(2, baseDays + offset); // Tối thiểu là 2 ngày
+      // Cập nhật nút bấm
+      ['summer', 'humid', 'winter'].forEach(s => {
+        const btn = document.getElementById('btn-' + s);
+        if (s === season) {
+          btn.className = 'px-4 py-2 rounded-xl font-bold text-sm transition text-white shadow ' +
+            (s === 'summer' ? 'bg-amber-500' : s === 'humid' ? 'bg-sky-600' : 'bg-indigo-600');
+        } else {
+          btn.className = 'px-4 py-2 rounded-xl font-bold text-sm transition bg-slate-100 text-slate-600 hover:bg-slate-200';
         }
+      });
 
-        // Hàm định dạng ngày tháng tiếng Việt (Hôm nay + N ngày)
-        function getFormattedFutureDate(daysToAdd) {
-            const date = new Date();
-            date.setDate(date.getDate() + daysToAdd);
-            const daysOfWeek = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-            const dayName = daysOfWeek[date.getDay()];
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            return `${dayName}, ${day}/${month}`;
-        }
+      // Cập nhật thông báo thời tiết
+      const alertBox = document.getElementById('season-alert');
+      if (season === 'summer') {
+        alertBox.className = 'rounded-2xl p-4 bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3';
+        alertBox.innerHTML = `<span class="text-2xl">☀️</span><div><p class="font-bold">Đang áp dụng chế độ: Mùa Hè Miền Bắc (Nắng nóng, điều hòa nhiều)</p><p class="text-sm mt-0.5">Đất nhanh khô và phòng bật điều hòa dễ làm khô đầu lá. Hệ thống tự động rút ngắn chu kỳ nhắc tưới nước cho ba mẹ!</p></div>`;
+      } else if (season === 'humid') {
+        alertBox.className = 'rounded-2xl p-4 bg-sky-50 border border-sky-200 text-sky-900 flex items-start gap-3';
+        alertBox.innerHTML = `<span class="text-2xl">💧</span><div><p class="font-bold">Cảnh báo Mùa Nồm Ẩm Miền Bắc (Độ ẩm không khí trên 85%)</p><p class="text-sm mt-0.5">Trời đang nồm ẩm, đất lâu khô! Ba mẹ hãy giảm lượng nước tưới để tránh cây bị úng rễ và nấm mốc nhé.</p></div>`;
+      } else {
+        alertBox.className = 'rounded-2xl p-4 bg-indigo-50 border border-indigo-200 text-indigo-900 flex items-start gap-3';
+        alertBox.innerHTML = `<span class="text-2xl">❄️</span><div><p class="font-bold">Đang áp dụng chế độ: Mùa Đông Miền Bắc (Lạnh, hanh khô)</p><p class="text-sm mt-0.5">Nên tưới cây vào buổi trưa ấm áp, tránh tưới nước quá lạnh vào sáng sớm và che chắn gió lùa ban công.</p></div>`;
+      }
 
-        // Hàm chọn chế độ thời tiết miền Bắc
-        function setSeason(seasonKey) {
-            currentSeason = seasonKey;
-            const season = seasonsData[seasonKey];
+      renderPlants();
+    }
 
-            // Cập nhật giao diện 3 nút chọn mùa
-            document.querySelectorAll('.season-btn').forEach(btn => {
-                btn.className = 'season-btn flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm border-2 border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition-all cursor-pointer';
-            });
-            const activeBtn = document.getElementById(`btn-${seasonKey}`);
-            activeBtn.className = `season-btn flex items-center justify-center gap-2 px-4 py-3 rounded-2xl font-bold text-sm border-2 transition-all cursor-pointer ${season.btnActiveClass}`;
+    function markWatered(plantId) {
+      const plant = plantsData.find(p => p.id === plantId);
+      const days = plant.nextDays[currentSeason];
+      const nextDate = new Date();
+      nextDate.setDate(nextDate.getDate() + days);
 
-            // Cập nhật hộp lời khuyên thời tiết
-            const adviceBox = document.getElementById('weather-advice-box');
-            adviceBox.className = `rounded-2xl p-4 sm:p-5 border-2 transition-all duration-300 flex items-start gap-4 animate-pop ${season.boxClass}`;
-            document.getElementById('weather-icon').textContent = season.icon;
-            document.getElementById('weather-title').textContent = season.title;
-            document.getElementById('weather-desc').textContent = season.desc;
-            document.getElementById('weather-badge').textContent = season.badge;
+      const dayNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+      const formatted = `${dayNames[nextDate.getDay()]}, ngày ${nextDate.getDate()}/${nextDate.getMonth() + 1}`;
 
-            // Vẽ lại danh sách cây để cập nhật chu kỳ ngày tưới mới
-            renderPlants();
-        }
+      wateredStatus[plantId] = `✅ Đã chăm xong! Hẹn tưới tiếp: ${formatted}`;
+      renderPlants();
+    }
 
-        // Hàm vẽ danh sách 5 thẻ cây
-        function renderPlants() {
-            const grid = document.getElementById('plants-grid');
-            grid.innerHTML = '';
+    function renderPlants() {
+      const grid = document.getElementById('plants-grid');
+      grid.innerHTML = plantsData.map(plant => {
+        const statusMsg = wateredStatus[plant.id];
+        return `
+          <div class="bg-white rounded-3xl p-5 border border-emerald-100 shadow-sm card-hover flex flex-col justify-between">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <span class="text-3xl bg-emerald-50 w-12 h-12 rounded-2xl flex items-center justify-center">${plant.emoji}</span>
+                <span class="text-xs font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">${plant.tag}</span>
+              </div>
+              <h3 class="text-lg font-bold text-slate-900">${plant.name}</h3>
+              <div class="text-xs text-amber-500 font-semibold mb-2">Độ dễ chăm: ${plant.stars}</div>
+              <p class="text-sm text-slate-600 mb-3 leading-relaxed">${plant.desc}</p>
+              <div class="bg-emerald-50/80 rounded-xl p-2.5 text-xs font-semibold text-emerald-800 mb-4">
+                🕒 Lịch mùa này: ${plant.waterRule[currentSeason]}
+              </div>
+            </div>
 
-            plantsData.forEach(plant => {
-                const isWatered = !!wateredState[plant.id];
-                const adjustedDays = getAdjustedDays(plant.baseDays);
-                const nextDateStr = getFormattedFutureDate(adjustedDays);
-                const starsStr = '⭐'.repeat(plant.stars) + '☆'.repeat(5 - plant.stars);
+            <div>
+              ${statusMsg ? `<div class="text-xs font-bold text-green-700 bg-green-100 px-3 py-2 rounded-xl mb-2 text-center">${statusMsg}</div>` : ''}
+              <button onclick="markWatered('${plant.id}')" class="w-full py-2.5 px-4 rounded-xl font-bold text-sm transition ${statusMsg ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200' : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'}">
+                💧 ${plant.btnText}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
-                const card = document.createElement('div');
-                card.className = `bg-white rounded-3xl shadow-sm hover:shadow-md border-2 transition-all duration-300 flex flex-col justify-between p-5 sm:p-6 ${
-                    isWatered ? 'border-emerald-400 bg-emerald-50/20' : 'border-emerald-100'
-                }`;
+    // Bác sĩ cây cảnh 10 giây
+    function diagnose(type) {
+      const title = document.getElementById('diag-title');
+      const desc = document.getElementById('diag-desc');
+      const cure = document.getElementById('diag-cure');
 
-                card.innerHTML = `
-                    <div>
-                        <!-- Phần trên thẻ: Hình cây + Tên + Đánh giá sao -->
-                        <div class="flex items-center gap-4">
-                            <div class="bg-emerald-50/80 rounded-2xl p-2 shrink-0 border border-emerald-100">
-                                ${plant.svg}
-                            </div>
-                            <div>
-                                <span class="inline-block text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
-                                    ${plant.subtitle}
-                                </span>
-                                <h3 class="text-xl font-extrabold text-slate-800 mt-1">${plant.name}</h3>
-                                <div class="text-xs font-semibold text-amber-600 mt-1" title="Độ dễ chăm sóc">
-                                    Độ dễ chăm: ${starsStr}
-                                </div>
-                            </div>
-                        </div>
+      if (type === 'yellow') {
+        title.textContent = 'Bệnh: Cây đang bị "ngộp nước" (Thừa nước)!';
+        desc.textContent = 'Nguyên nhân: Ba mẹ tưới quá nhiều hoặc tưới vào ngày trời nồm ẩm khiến rễ cây bị úng, không thở được.';
+        cure.textContent = '✅ Cách cứu 1 bước: Ngừng tưới nước ngay 7–10 ngày, cắt bỏ lá vàng và đặt chậu ra chỗ thoáng gió!';
+      } else if (type === 'dry') {
+        title.textContent = 'Bệnh: Cây đang "kêu cứu" vì khát nước!';
+        desc.textContent = 'Nguyên nhân: Đất trong chậu đã khô cứng, cây thiếu nước để vận chuyển chất dinh dưỡng lên nuôi lá (rất hay gặp ở cây Lan Ý).';
+        cure.textContent = '✅ Cách cứu 1 bước: Tưới từ từ một cốc nước sạch (có thể dùng nước từ máy lọc mini) quanh gốc cây. Chỉ sau 1–2 tiếng cây sẽ tươi tỉnh trở lại!';
+      } else {
+        title.textContent = 'Bệnh: Cây bị khô không khí do điều hòa hoặc nắng gắt!';
+        desc.textContent = 'Nguyên nhân: Đặt cây ngay luồng gió điều hòa hoặc sát cửa kính nắng gắt làm cháy mép lá.';
+        cure.textContent = '✅ Cách cứu 1 bước: Di chuyển chậu cây ra xa luồng gió điều hòa 1–2 mét và dùng bình xịt phun sương nhẹ lên lá mỗi tuần.';
+      }
+    }
 
-                        <!-- Thông tin vị trí và mẹo chăm -->
-                        <div class="mt-4 space-y-2 text-sm text-slate-600">
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-700">📍 Vị trí đẹp:</span>
-                                <span>${plant.location}</span>
-                            </div>
-                            <p class="bg-slate-50 p-3 rounded-xl text-slate-700 leading-relaxed border border-slate-100">
-                                💡 ${plant.tip}
-                            </p>
-                        </div>
-                    </div>
+    // Chatbot Chuyên gia Cây Xanh Tí Hon
+    function toggleChat() {
+      const win = document.getElementById('chat-window');
+      win.classList.toggle('hidden');
+    }
 
-                    <!-- Phần dưới thẻ: Trạng thái lịch tưới & Nút bấm tương tác -->
-                    <div class="mt-5 pt-4 border-t border-slate-100">
-                        ${
-                            isWatered
-                            ? `
-                                <div class="bg-emerald-100/80 border border-emerald-300 rounded-2xl p-3 mb-3 animate-pop">
-                                    <div class="flex items-center justify-between text-xs font-bold text-emerald-800">
-                                        <span>✅ Đã ${plant.verb}: Hôm nay</span>
-                                        <span class="bg-white px-2 py-0.5 rounded-full text-emerald-700">Còn ${adjustedDays} ngày</span>
-                                    </div>
-                                    <div class="text-sm font-extrabold text-emerald-950 mt-1">
-                                        📅 Lần tới: ${nextDateStr}
-                                    </div>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button disabled class="flex-grow py-3 px-4 rounded-2xl bg-emerald-600 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm cursor-default">
-                                        <span>🎉</span>
-                                        <span>Tuyệt vời! Cây đã đủ nước</span>
-                                    </button>
-                                    <button onclick="toggleWater('${plant.id}', false)" title="Đặt lại trạng thái" class="px-3.5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition cursor-pointer">
-                                        Đặt lại
-                                    </button>
-                                </div>
-                            `
-                            : `
-                                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-3 flex items-center justify-between">
-                                    <span class="text-xs sm:text-sm font-bold text-amber-800 flex items-center gap-1.5">
-                                        <span>⏰</span>
-                                        <span>Cần kiểm tra ${plant.verb}</span>
-                                    </span>
-                                    <span class="text-xs font-bold bg-white text-amber-900 px-2.5 py-1 rounded-full border border-amber-200">
-                                        Chu kỳ ${adjustedDays} ngày
-                                    </span>
-                                </div>
-                                <button onclick="toggleWater('${plant.id}', true)" class="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 active:scale-[0.98] text-white font-extrabold text-sm sm:text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                    <span>💦</span>
-                                    <span>${plant.actionLabel}</span>
-                                </button>
-                            `
-                        }
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
+    function askQuick(question) {
+      document.getElementById('chat-input').value = question;
+      handleChatSubmit(new Event('submit'));
+    }
 
-        // Hàm xử lý khi bấm nút "Hôm nay đã tưới" hoặc "Đặt lại"
-        function toggleWater(plantId, status) {
-            wateredState[plantId] = status;
-            renderPlants();
+    function getBotReply(msg) {
+      const q = msg.toLowerCase();
+      if (q.includes('hoa giấy')) {
+        return '🌸 <strong>Hoa Giấy</strong> cực hợp nắng miền Bắc! Mẹo cho ba mẹ bận rộn: Hoa giấy càng khô càng ra nhiều hoa, chỉ tưới khi thấy lá hơi héo rũ. Mùa nồm nhớ kê chậu cao tránh đọng nước nhé!';
+      }
+      if (q.includes('sen đá') || q.includes('xương rồng')) {
+        return '🌵 <strong>Sen Đá</strong> rất sợ mùa nồm ẩm miền Bắc! Ba mẹ đặt cây ở bệ cửa sổ nhiều nắng, 10–14 ngày mới tưới một chút nước quanh gốc, tuyệt đối không tưới lên ngọn lá kẻo úng ạ.';
+      }
+      if (q.includes('máy lọc') || q.includes('nước')) {
+        return '💧 Nước vo gạo hoặc nước rửa rau sau khi lọc qua <strong>Mô hình Máy Lọc Nước Mini</strong> của nhóm con đã sạch cặn bẩn và mùi hôi, dùng tưới cho cả 5 loài cây trong nhà đều rất tốt và tiết kiệm nước sạch ạ!';
+      }
+      if (q.includes('bàng singapore') || q.includes('hạnh phúc')) {
+        return '🌳 <strong>Cây Bàng Singapore / Cây Hạnh Phúc</strong> rất hợp đặt phòng khách miền Bắc. Ba mẹ chỉ cần tưới 1 lần/tuần khi mặt đất khô và dùng khăn ẩm lau bụi trên lá 2 tuần/lần là cây xanh mướt!';
+      }
+      if (q.includes('nồm')) {
+        return '☔ Vào <strong>mùa nồm miền Bắc</strong> (tháng 2 – tháng 4), độ ẩm rất cao nên ba mẹ giảm một nửa số lần tưới so với mùa hè, đồng thời mở quạt nhẹ cho phòng thoáng để cây không bị nấm mốc nhé!';
+      }
+      return '🌱 Cảm ơn câu hỏi của ba mẹ! Với cây cảnh trồng trong nhà ở miền Bắc, quy tắc vàng 5 phút là: <strong>"Kiểm tra mặt đất khô mới tưới"</strong> (khoảng 1 lần/tuần), ưu tiên dùng nước sạch đã lọc qua máy lọc mini và giảm tưới vào mùa nồm ẩm ạ!';
+    }
 
-            if (status) {
-                const plant = plantsData.find(p => p.id === plantId);
-                const days = getAdjustedDays(plant.baseDays);
-                const nextDate = getFormattedFutureDate(days);
-                showToast(`🌿 Đã ghi nhận chăm sóc ${plant.name}! Hẹn ba mẹ ${plant.verb} lại vào ${nextDate}.`);
-            }
-        }
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
 
-        // Hàm đặt lại toàn bộ các cây (dùng khi thuyết trình thử nghiệm nhiều lần)
-        function resetAllPlants() {
-            wateredState = {};
-            renderPlants();
-            showToast('🔄 Đã đặt lại trạng thái tất cả 5 chậu cây!');
-        }
+      const box = document.getElementById('chat-messages');
+      const botBtn = document.getElementById('bot-avatar-btn');
 
-        // Hàm xử lý Bác sĩ cây cảnh 10 giây
-        function diagnose(symptomKey) {
-            const data = diagnosisData[symptomKey];
-            if (!data) return;
+      // Tin nhắn người dùng
+      box.innerHTML += `
+        <div class="flex justify-end">
+          <div class="bg-emerald-600 text-white rounded-2xl rounded-tr-none px-3.5 py-2.5 max-w-[80%] shadow-sm">
+            ${text}
+          </div>
+        </div>
+      `;
+      input.value = '';
+      box.scrollTop = box.scrollHeight;
 
-            // Đổi viền nút đang chọn
-            document.querySelectorAll('.symptom-btn').forEach(btn => {
-                btn.classList.remove('ring-4', 'ring-emerald-300', 'border-emerald-500', 'bg-emerald-50');
-            });
-            const activeBtn = document.getElementById(`sym-${symptomKey}`);
-            activeBtn.classList.add('ring-4', 'ring-emerald-300', 'border-emerald-500', 'bg-emerald-50');
+      // Hiệu ứng suy nghĩ
+      botBtn.classList.add('bot-thinking');
+      const typingId = 'typing-' + Date.now();
+      box.innerHTML += `
+        <div id="${typingId}" class="flex items-start gap-2">
+          <div class="bg-white border border-emerald-200 rounded-2xl rounded-tl-none px-3 py-2 text-xs text-slate-400 italic">
+            Chuyên gia Tí Hon đang suy nghĩ...
+          </div>
+        </div>
+      `;
+      box.scrollTop = box.scrollHeight;
 
-            // Hiển thị đơn thuốc
-            const resultBox = document.getElementById('diagnosis-result');
-            document.getElementById('diag-icon').textContent = data.icon;
-            document.getElementById('diag-title').textContent = data.title;
-            document.getElementById('diag-cause').textContent = data.cause;
-            document.getElementById('diag-action').textContent = data.action;
+      setTimeout(() => {
+        botBtn.classList.remove('bot-thinking');
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
 
-            resultBox.classList.remove('hidden');
-            // Tạo lại hiệu ứng pop
-            resultBox.classList.remove('animate-pop');
-            void resultBox.offsetWidth;
-            resultBox.classList.add('animate-pop');
-        }
+        box.innerHTML += `
+          <div class="flex items-start gap-2">
+            <div class="bg-white border border-emerald-200 rounded-2xl rounded-tl-none p-3 shadow-sm text-slate-700 leading-relaxed">
+              ${getBotReply(text)}
+            </div>
+          </div>
+        `;
+        box.scrollTop = box.scrollHeight;
+      }, 600);
+    }
 
-        // Hàm hiển thị thông báo Toast nhỏ gọn, dễ thương
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'bg-slate-900/95 text-white px-4 py-3 rounded-2xl shadow-xl text-xs sm:text-sm font-semibold max-w-xs sm:max-w-sm animate-pop border border-emerald-400/40';
-            toast.textContent = message;
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(10px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        // Khởi chạy mặc định khi mở trang web
-        window.addEventListener('DOMContentLoaded', () => {
-            setSeason('summer');
-        });
-
-        // =========================================================================
-        // 4. LOGIC CHATBOT AI ("CHUYÊN GIA CÂY XANH TÍ HON") TÍCH HỢP GEMINI API
-        // =========================================================================
-        let isChatOpen = false;
-        let isBotThinking = false;
-        let chatConversationHistory = [];
-
-        // Đóng / Mở cửa sổ chat
-        function toggleChatWindow() {
-            isChatOpen = !isChatOpen;
-            const chatWindow = document.getElementById('chat-window');
-            const callout = document.getElementById('chat-callout');
-
-            if (isChatOpen) {
-                chatWindow.classList.remove('hidden');
-                callout.classList.add('hidden');
-                setTimeout(() => {
-                    document.getElementById('chat-input').focus();
-                }, 150);
-            } else {
-                chatWindow.classList.add('hidden');
-                callout.classList.remove('hidden');
-            }
-        }
-
-        // Gửi câu hỏi gợi ý nhanh
-        function sendQuickQuestion(questionText) {
-            if (isBotThinking) return;
-            document.getElementById('chat-input').value = questionText;
-            handleChatSubmit(new Event('submit'));
-        }
-
-        // Xử lý khi người dùng gửi tin nhắn
-        async function handleChatSubmit(event) {
-            event.preventDefault();
-            if (isBotThinking) return;
-
-            const inputEl = document.getElementById('chat-input');
-            const userText = inputEl.value.trim();
-            if (!userText) return;
-
-            // Hiển thị tin nhắn của ba mẹ lên khung chat
-            appendMessage('user', userText);
-            inputEl.value = '';
-
-            // Bật trạng thái đang suy nghĩ của nhân vật làm vườn
-            setBotThinkingState(true);
-            const loadingId = appendLoadingBubble();
-
-            try {
-                const replyText = await callGeminiPlantAssistant(userText);
-                removeLoadingBubble(loadingId);
-                appendMessage('bot', replyText);
-            } catch (error) {
-                removeLoadingBubble(loadingId);
-                appendMessage(
-                    'bot',
-                    'Úi, đường truyền mạng hơi chập chờn một chút ạ! Ba mẹ thử bấm gửi lại câu hỏi giúp cháu nhé 🌱'
-                );
-            } finally {
-                setBotThinkingState(false);
-            }
-        }
-
-        // Hiệu ứng nhân vật avatar gật gù & cập nhật trạng thái khi đang trả lời
-        function setBotThinkingState(thinking) {
-            isBotThinking = thinking;
-            const avatarBox = document.getElementById('gardener-avatar-box');
-            const statusText = document.getElementById('gardener-status-text');
-            const sendBtn = document.getElementById('chat-send-btn');
-
-            if (thinking) {
-                avatarBox.classList.add('animate-gardener-talk');
-                statusText.innerHTML = '<span>🤔 Đang tra cứu sổ tay cây xanh...</span>';
-                sendBtn.disabled = true;
-                sendBtn.classList.add('opacity-60');
-            } else {
-                avatarBox.classList.remove('animate-gardener-talk');
-                statusText.innerHTML = '<span>🌻 Sẵn sàng giải đáp cho ba mẹ!</span>';
-                sendBtn.disabled = false;
-                sendBtn.classList.remove('opacity-60');
-            }
-        }
-
-        // Thêm tin nhắn vào khung chat (hỗ trợ định dạng in đậm và xuống dòng gọn gàng)
-        function appendMessage(sender, text) {
-            const container = document.getElementById('chat-messages');
-            const wrapper = document.createElement('div');
-            wrapper.className = 'animate-pop';
-
-            if (sender === 'user') {
-                wrapper.className += ' flex justify-end';
-                wrapper.innerHTML = `
-                    <div class="bg-emerald-600 text-white rounded-2xl rounded-tr-none px-3.5 py-2.5 shadow-sm max-w-[82%] text-xs sm:text-sm leading-relaxed">
-                        ${escapeHtml(text)}
-                    </div>
-                `;
-            } else {
-                wrapper.className += ' flex items-start gap-2.5';
-                const formattedHtml = formatBotResponse(text);
-                wrapper.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0 text-base shadow-sm mt-0.5">
-                        🧑‍🌾
-                    </div>
-                    <div class="bg-white border border-emerald-100 text-slate-700 rounded-2xl rounded-tl-none p-3.5 shadow-sm max-w-[85%] text-xs sm:text-sm leading-relaxed space-y-1.5">
-                        ${formattedHtml}
-                    </div>
-                `;
-            }
-
-            container.appendChild(wrapper);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        // Bong bóng hiệu ứng 3 chấm đang gõ
-        function appendLoadingBubble() {
-            const container = document.getElementById('chat-messages');
-            const id = 'loading-' + Date.now();
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = 'flex items-start gap-2.5 animate-pop';
-            div.innerHTML = `
-                <div class="w-8 h-8 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0 text-base shadow-sm">
-                    🧑‍🌾
-                </div>
-                <div class="bg-white border border-emerald-100 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center gap-1.5">
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></span>
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
-                    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
-                </div>
-            `;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-            return id;
-        }
-
-        function removeLoadingBubble(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-
-        // Chuyển đổi Markdown đơn giản (**in đậm**, gạch đầu dòng) sang HTML đẹp mắt
-        function formatBotResponse(rawText) {
-            let safe = escapeHtml(rawText);
-            // Chuyển **text** thành <strong>text</strong>
-            safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong class="text-emerald-800">$1</strong>');
-            // Tách từng dòng để hiển thị gọn gàng
-            const lines = safe.split('\n').filter(line => line.trim() !== '');
-            return lines.map(line => {
-                const trimmed = line.trim();
-                if (trimmed.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('• ')) {
-                    return `<div class="flex items-start gap-1.5"><span class="text-emerald-600 font-bold">•</span><span>${trimmed.substring(2)}</span></div>`;
-                }
-                return `<p>${trimmed}</p>`;
-            }).join('');
-        }
-
-        function escapeHtml(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
-
-        // Gọi Gemini API với System Instruction đóng vai "Chuyên gia Cây Xanh Tí Hon" của nhóm lớp 3
-        async function callGeminiPlantAssistant(userMessage) {
-            const currentSeasonName = seasonsData[currentSeason]?.name || 'Mùa Hè';
-
-            const systemPrompt = `Bạn là "Trợ lý Cây Xanh Tí Hon" (nhân vật bạn nhỏ/người làm vườn đội mũ rơm, mặc tạp dề xanh) do nhóm học sinh lớp 3 lập trình cho cuộc thi STEMpetition 2026 (hạng mục Sáng tạo & Đổi mới).
-Nhiệm vụ của bạn là hướng dẫn ba mẹ bận rộn cách chăm sóc các loài cây cảnh (cây ban công, cây trong nhà, cây văn phòng, cây ăn quả mini, trị sâu bệnh, bón phân, chọn cây hợp hướng nắng...).
-Quy tắc trả lời BẮT BUỘC:
-1. Xưng hô lễ phép, ấm áp, dễ thương kiểu học sinh tiểu học lễ phép với người lớn: xưng "cháu" và gọi người dùng là "ba mẹ" (hoặc "cô chú / ba mẹ").
-2. Trả lời cực kỳ ngắn gọn, súc tích, dễ đọc trong 30 giây cho người bận rộn (tối đa 3–4 gạch đầu dòng thực tế: ☀️ Ánh sáng, 💧 Tưới nước, 🌱 Mẹo nhỏ/Lưu ý).
-3. Luôn liên hệ với khí hậu miền Bắc Việt Nam (đặc biệt lưu ý mùa hiện tại người dùng đang chọn trên web là: ${currentSeasonName}, và nhắc khéo về mùa nồm ẩm, mùa hè nóng bức hoặc mùa đông gió lạnh miền Bắc nếu phù hợp).
-4. Sử dụng 2-3 emoji sinh động (🌿, 💧, ☀️, 🪴, ✨) để đoạn chat thân thiện, vui tươi.`;
-
-            // Lưu lịch sử hội thoại ngắn gọn (tối đa 6 lượt gần nhất) để AI nhớ ngữ cảnh
-            chatConversationHistory.push({
-                role: 'user',
-                parts: [{ text: userMessage }]
-            });
-            if (chatConversationHistory.length > 6) {
-                chatConversationHistory = chatConversationHistory.slice(-6);
-            }
-
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: chatConversationHistory,
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                }
-            };
-
-            // Thực hiện gọi API kèm cơ chế tự thử lại (exponential backoff) nếu nghẽn mạng
-            const maxRetries = 3;
-            let delay = 1000;
-
-            for (let attempt = 0; attempt <= maxRetries; attempt++) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    const reply = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-                    if (reply) {
-                        chatConversationHistory.push({
-                            role: 'model',
-                            parts: [{ text: reply }]
-                        });
-                        return reply;
-                    }
-                    throw new Error('Empty response');
-                } catch (err) {
-                    if (attempt === maxRetries) {
-                        throw err;
-                    }
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                    delay *= 2;
-                }
-            }
-        }
-    </script>
+    // Khởi chạy ban đầu
+    renderPlants();
+  </script>
 </body>
 </html>
